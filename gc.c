@@ -42,6 +42,8 @@ volatile struct GC* build_gc_struct( int c )	{
 
 	gc->c = c;
 	gc->v = 0;
+	gc->size = (int*) calloc( c, sizeof(int) );
+	gc->types = (TYPE*) calloc( c, sizeof(TYPE) );
 	gc->_v_ = 0;
 	gc->_delquote_ = 0;
 
@@ -76,7 +78,6 @@ int getRef( void* ref )	{
 	return -1;
 }
 
-
 int freeRef( void* ref )	{
 
 	int k;
@@ -94,7 +95,6 @@ int freeRef( void* ref )	{
 
 	return -1;
 }
-
 int freeGC( volatile struct GC* gc )	{
 
 	if( gc==NULL )
@@ -109,6 +109,30 @@ int freeGC( volatile struct GC* gc )	{
 	return t;
 }
 
+
+void* galloc( int size )	{
+
+	void* _ = g( malloc(size) );
+
+	// Do below after, incase g(...) needs to re-alloc storage for the
+	// Active GC Context.
+	gc->size[gc->v-1] = size;
+	// gc->types[gc->v-1] = type;
+	return _;
+}
+
+void* galloc2( int size, TYPE type )	{
+
+	void* _ = g( malloc(size) );
+
+	// Do below after, incase g(...) needs to re-alloc storage for the
+	// Active GC Context.
+	gc->size[gc->v-1] = size;
+	gc->types[gc->v-1] = type;
+	
+	return _;
+}
+
 void* g( void* ref )	{
 
 	#ifndef report
@@ -118,6 +142,8 @@ void* g( void* ref )	{
 	loop:
 	
 		if( gc->c > gc->v )	{
+			
+			*(gc->size[v]) = 0;
 			gc->_[gc->v++] = ref;
 			gc->_v_++;
 			return ref;

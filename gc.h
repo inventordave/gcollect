@@ -8,12 +8,99 @@ typedef struct GC	{
 	void** _;
 	int c;
 	int v;
+	int* size;
+	TYPE* types;
 
 	int _v_;
 
 	int _delquote_;
 
 } GC;
+
+typedef enum {
+
+	VOID_PTR,
+	VOID_PTR_PTR,
+
+
+	INT,
+	UNSIGNED_INT,
+	SIGNED_INT,
+
+	INT_PTR,
+	UNSIGNED_INT_PTR,
+	SIGNED_INT_PTR,
+	
+	INT_PTR_PTR,
+	UNSIGNED_INT_PTR_PTR,
+	SIGNED_INT_PTR_PTR,
+
+
+	LONG_INT,
+	UNSIGNED_LONG_INT,
+	SIGNED_LONG_INT,
+
+	LONG_INT_PTR,
+	UNSIGNED_LONG_INT_PTR,
+	SIGNED_LONG_INT_PTR,
+
+	LONG_INT_PTR_PTR,
+	UNSIGNED_LONG_INT_PTR_PTR,
+	SIGNED_LONG_INT_PTR_PTR,
+
+
+	LONG_LONG_INT,
+	UNSIGNED_LONG_LONG_INT,
+	SIGNED_LONG_LONG_INT,
+	
+	LONG_LONG_INT_PTR,
+	UNSIGNED_LONG_LONG_INT_PTR,
+	SIGNED_LONG_LONG_INT_PTR,
+
+	LONG_LONG_INT_PTR_PTR,
+	UNSIGNED_LONG_LONG_INT_PTR_PTR,
+	SIGNED_LONG_LONG_INT_PTR_PTR,
+
+
+	CHAR,
+	UNSIGNED_CHAR,
+	SIGNED_CHAR,
+
+	CHAR_PTR,
+	UNSIGNED_CHAR_PTR,
+	SIGNED_CHAR_PTR,
+
+	CHAR_PTR_PTR,
+	UNSIGNED_CHAR_PTR_PTR,
+	SIGNED_CHAR_PTR_PTR,
+
+
+	FLOAT,
+	UNSIGNED_FLOAT,
+	SIGNED_FLOAT,
+
+	FLOAT_PTR,
+	UNSIGNED_FLOAT_PTR,
+	SIGNED_FLOAT_PTR,
+
+	FLOAT_PTR_PTR,
+	UNSIGNED_FLOAT_PTR_PTR,
+	SIGNED_FLOAT_PTR_PTR,
+
+
+	DOUBLE,
+	UNSIGNED_DOUBLE,
+	SIGNED_DOUBLE,
+
+	DOUBLE_PTR,
+	UNSIGNED_DOUBLE_PTR,
+	SIGNED_DOUBLE_PTR,
+
+	DOUBLE_PTR_PTR,
+	UNSIGNED_DOUBLE_PTR_PTR,
+	SIGNED_DOUBLE_PTR_PTR,
+
+} TYPE;
 
 typedef struct gc_report	{
 
@@ -33,21 +120,21 @@ extern volatile struct GC* getGC();
 extern int setGC( volatile struct GC* );
 
 // Saves a copy of heap-allocated reference, and returns a copy of the reference.
-// Usage: g( ref )
+// Default Usage: g( ref )
 extern void* g( void* );
 
+// These 2 store more information, and do the malloc() allocation internally.
+extern void* galloc( int buffer_size );
+extern void* galloc2( int buffer_size, TYPE storage_class );
 
+// Helper. returns a new reference static-casted to (char*)..
 extern char* gcchar( void* );
-
 
 // Helper to free any GC contexts you have initialised with fnc:
 // GC_* build_gc_struct(int);
 extern int freeGC( volatile struct GC* gc );
 
-
 int getRef( void* );
-
-
 
 // self-explanatory.
 // Searches the Active GC Context.
