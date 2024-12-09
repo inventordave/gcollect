@@ -58,14 +58,14 @@ int setGC( volatile struct GC* _ )	{
 
 	if( _->_ != NULL )	{
 
-		gc =  _;
+		gc = _;
 		return 1;
 	}
 
 	return 0;
 }
 
-int getRef( void* ref )	{
+signed getRef( void* ref )	{
 
 	int k;
 	for( k=0; k<gc->v; k++ )	{
@@ -76,6 +76,14 @@ int getRef( void* ref )	{
 	}
 
 	return -1;
+}
+void* getRef2( int k )	{
+
+	if( gc->v > k )
+		if( gc->_ != NULL )
+			return gc->_[k];
+
+	return NULL;
 }
 
 int freeRef( void* ref )	{
@@ -87,6 +95,8 @@ int freeRef( void* ref )	{
 
 			free( gc->_[k] );
 			gc->_[k] = NULL;
+			gc->size[k] = 0;
+			gc->types[k] = DELETED;
 			gc->_v_--;
 			gc->_delquote_++;
 			return k;
@@ -97,11 +107,18 @@ int freeRef( void* ref )	{
 }
 int freeGC( volatile struct GC* gc )	{
 
-	if( gc==NULL )
+	if( gc == NULL )
 		return 0;
 
-	if( gc->_!=NULL )
-		freeRef( gc->_ );
+	if( gc->_ != NULL )
+		for( int x=0; x<gc->v; x++ )
+			freeRef( gc->_[x] );
+
+	if( gc->size != NULL )
+		free( gc->size );
+
+	if( gc->types != NULL )
+		free( gc->types );
 
 	int t = gc->_v_;
 	free( (struct GC*) gc );
@@ -109,15 +126,13 @@ int freeGC( volatile struct GC* gc )	{
 	return t;
 }
 
-
 void* galloc( int size )	{
 
 	void* _ = g( malloc(size) );
 
-	// Do below after, incase g(...) needs to re-alloc storage for the
-	// Active GC Context.
 	gc->size[gc->v-1] = size;
-	// gc->types[gc->v-1] = type;
+	gc->types[gc->v-1] = NOT_SPECIFIED;
+
 	return _;
 }
 
@@ -125,43 +140,171 @@ void* galloc2( int size, TYPE type )	{
 
 	void* _ = g( malloc(size) );
 
-	// Do below after, incase g(...) needs to re-alloc storage for the
-	// Active GC Context.
 	gc->size[gc->v-1] = size;
 	gc->types[gc->v-1] = type;
+
+	return _;
+}
+
+int sizeof_type( TYPE type )	{
+
+	switch( type )	{
+
+		break;
+		case NOT_SPECIFIED:
+			return 0;
+			break;
+
+		break;
+		case VOID_PTR:
+			return sizeof( void* );
+			break;
+
+		break;
+		case return sizeof( void** ):
+			return 0;
+			break;
+
+		break;
+		case NOT_SPECIFIED:
+			return 0;
+			break;
+
+		break;
+		case NOT_SPECIFIED:
+			return 0;
+			break;
+
+	}
+
+
+	/**#
+typedef enum {
+
+	NOT_SPECIFIED,
+
+	VOID_PTR,
+	VOID_PTR_PTR,
+
+	INT,
+	UNSIGNED_INT,
+	SIGNED_INT,
+
+	INT_PTR,
+	UNSIGNED_INT_PTR,
+	SIGNED_INT_PTR,
 	
+	INT_PTR_PTR,
+	UNSIGNED_INT_PTR_PTR,
+	SIGNED_INT_PTR_PTR,
+
+
+	LONG_INT,
+	UNSIGNED_LONG_INT,
+	SIGNED_LONG_INT,
+
+	LONG_INT_PTR,
+	UNSIGNED_LONG_INT_PTR,
+	SIGNED_LONG_INT_PTR,
+
+	LONG_INT_PTR_PTR,
+	UNSIGNED_LONG_INT_PTR_PTR,
+	SIGNED_LONG_INT_PTR_PTR,
+
+
+	LONG_LONG_INT,
+	UNSIGNED_LONG_LONG_INT,
+	SIGNED_LONG_LONG_INT,
+	
+	LONG_LONG_INT_PTR,
+	UNSIGNED_LONG_LONG_INT_PTR,
+	SIGNED_LONG_LONG_INT_PTR,
+
+	LONG_LONG_INT_PTR_PTR,
+	UNSIGNED_LONG_LONG_INT_PTR_PTR,
+	SIGNED_LONG_LONG_INT_PTR_PTR,
+
+	CHAR,
+	UNSIGNED_CHAR,
+	SIGNED_CHAR,
+
+	CHAR_PTR,
+	UNSIGNED_CHAR_PTR,
+	SIGNED_CHAR_PTR,
+
+	CHAR_PTR_PTR,
+	UNSIGNED_CHAR_PTR_PTR,
+	SIGNED_CHAR_PTR_PTR,
+
+	FLOAT,
+	UNSIGNED_FLOAT,
+	SIGNED_FLOAT,
+
+	FLOAT_PTR,
+	UNSIGNED_FLOAT_PTR,
+	SIGNED_FLOAT_PTR,
+
+	FLOAT_PTR_PTR,
+	UNSIGNED_FLOAT_PTR_PTR,
+	SIGNED_FLOAT_PTR_PTR,
+
+	DOUBLE,
+	UNSIGNED_DOUBLE,
+	SIGNED_DOUBLE,
+
+	DOUBLE_PTR,
+	UNSIGNED_DOUBLE_PTR,
+	SIGNED_DOUBLE_PTR,
+
+	DOUBLE_PTR_PTR,
+	UNSIGNED_DOUBLE_PTR_PTR,
+	SIGNED_DOUBLE_PTR_PTR,
+
+	STRUCT,
+	STRUCT_PTR,
+	STRUCT_PTR_PTR
+
+} TYPE;
+	*/
+
+}
+
+
+
+
+void* galloc3( TYPE type )	{
+
+	void* _ = g( malloc( sizeof_type(type) ) );
+
+	gc->size[gc->v-1] = -1;
+	gc->types[gc->v-1] = CHAR_PTR;
+
 	return _;
 }
 
 void* g( void* ref )	{
-
-	#ifndef report
-	#define report printf
-	#endif
 	
 	loop:
 	
-		if( gc->c > gc->v )	{
-			
-			*(gc->size[v]) = 0;
-			gc->_[gc->v++] = ref;
-			gc->_v_++;
-			return ref;
-		}
+	if( gc->c > gc->v )	{
 		
+		*(gc->size[v]) = 0;
+		gc->_[gc->v++] = ref;
+		gc->_v_++;
+		return ref;
+	}
 
-	
-		report( "The GC object (ref '%p') has been exhausted. Increasing to x2 size (current size = %d, new size = %d).\n", gc, gc->c, gc->c*2 );
-	
-		int i;
-		if( (i = realloc_gc( gc, gc->c*2 ))<+1 )	{
-	
-			report( "Reallocation failed (status code '%d'). Exiting.\n", i );
-			fflush( stdout );
-			exit( 1 );
-		}
-	
-		goto loop;
+	report( "The GC object (ref '%p') has been exhausted. Increasing to x2 size (current size = %d, new size = %d).\n", gc, gc->c, gc->c*2 );
+
+	int i;
+	if( (i = realloc_gc( gc, gc->c*2 ))<+1 )	{
+
+		report( "Reallocation failed (status code '%d'). Exiting.\n", i );
+		fflush( stdout );
+		exit( 1 );
+	}
+
+	goto loop;
 
 	report( "If you can see this message, the GC has not caught a reference allocation. For assistance "
 					"the reference address & is '%p'.\n", ref );
@@ -171,7 +314,12 @@ void* g( void* ref )	{
 
 char* gcchar( void* ref )	{
 
-	return (char*) g( ref );
+	return (char*) galloc3( CHAR_PTR );
+}
+
+char* gcchar2( int length )	{
+
+	return (char*) galloc2( length, CHAR_PTR );
 }
 
 int gc_status()	{
