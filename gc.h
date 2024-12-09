@@ -11,19 +11,6 @@
 
 // ** GC CONTEXT STRUCTURES ** //
 
-typedef struct	{
-
-	void** _;
-	int c;
-	int v;
-	signed* size;
-	TYPE* types;
-
-	int _v_;
-	int _delquote_;
-
-} GC;
-
 typedef enum {
 
 	NOT_SPECIFIED,
@@ -118,7 +105,20 @@ typedef enum {
 
 } TYPE;
 
-typedef struct	{
+typedef struct GC	{
+
+	void** _;
+	int c;
+	int v;
+	signed* size;
+	TYPE* types;
+
+	int _v_;
+	int _delquote_;
+
+} GC;
+
+typedef struct gc_report	{
 
 	int totalDeleted;
 	int v;

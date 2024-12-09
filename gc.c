@@ -133,7 +133,7 @@ void* g( void* ref )	{
 	
 	if( gc->c > gc->v )	{
 		
-		(gc->size[v]) = 1;
+		(gc->size[gc->v]) = 1;
 		gc->_[gc->v++] = ref;
 		gc->_v_++;
 		return ref;
@@ -293,7 +293,7 @@ signed sizeof_type( TYPE type )	{
 
 		break;
 		case VOID_PTR_PTR:
-			return sizeof( void** ):
+			return sizeof( void** );
 			return 0;
 			break;
 
@@ -562,12 +562,12 @@ signed sizeof_type( TYPE type )	{
 		// STRUCT_PTR CLASSES.
 		break;
 		case STRUCT_PTR:
-			return sizeof( struct* );
+			return sizeof( void* );
 			break;
 
 		break;
 		case STRUCT_PTR_PTR:
-			return sizeof( struct** );
+			return sizeof( void** );
 			break;
 
 		break;
