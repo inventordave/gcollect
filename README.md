@@ -13,4 +13,4 @@ Have fun examining my 'gc.c' SOURCE and 'gc.h' HEADER file. Comments/suggestions
 
 Written by Dave, 2024. Earth 66.
 
-// EOF
+# EOF
