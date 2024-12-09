@@ -1,4 +1,4 @@
-.ccls-cache
-.replit
-*.nix
+*.o
+*.exe
 
+# EOF
