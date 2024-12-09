@@ -425,7 +425,7 @@ signed sizeof_type( TYPE type )	{
 			break;
 
 		break;
-		case UNSIGNED CHAR:
+		case UNSIGNED_CHAR:
 			return sizeof( unsigned char ); // STD C guarantees this to be size(1)
 			break;
 
@@ -473,12 +473,12 @@ signed sizeof_type( TYPE type )	{
 
 		break;
 		case UNSIGNED_FLOAT:
-			return sizeof( unsigned float );
+			return sizeof( float );
 			break;
 
 		break;
 		case SIGNED_FLOAT:
-			return sizeof( signed float );
+			return sizeof( float );
 			break;
 
 		break;
@@ -488,12 +488,12 @@ signed sizeof_type( TYPE type )	{
 
 		break;
 		case UNSIGNED_FLOAT_PTR:
-			return sizeof( unsigned float * );
+			return sizeof( float * );
 			break;
 
 		break;
 		case SIGNED_FLOAT_PTR:
-			return sizeof( signed float * );
+			return sizeof( float * );
 			break;
 
 		break;
@@ -503,12 +503,12 @@ signed sizeof_type( TYPE type )	{
 
 		break;
 		case UNSIGNED_FLOAT_PTR_PTR:
-			return sizeof( unsigned float ** );
+			return sizeof( float ** );
 			break;
 
 		break;
 		case SIGNED_FLOAT_PTR_PTR:
-			return sizeof( signed float ** );
+			return sizeof( float ** );
 			break;
 
 
@@ -520,12 +520,12 @@ signed sizeof_type( TYPE type )	{
 
 		break;
 		case UNSIGNED_DOUBLE:
-			return sizeof( unsigned double );
+			return sizeof( double );
 			break;
 
 		break;
 		case SIGNED_DOUBLE:
-			return sizeof( signed double );
+			return sizeof( double );
 			break;
 
 		break;
@@ -535,12 +535,12 @@ signed sizeof_type( TYPE type )	{
 
 		break;
 		case UNSIGNED_DOUBLE_PTR:
-			return sizeof( unsigned double * );
+			return sizeof( double * );
 			break;
 
 		break;
 		case SIGNED_DOUBLE_PTR:
-			return sizeof( signed double * );
+			return sizeof( double * );
 			break;
 
 		break;
@@ -550,12 +550,12 @@ signed sizeof_type( TYPE type )	{
 
 		break;
 		case UNSIGNED_DOUBLE_PTR_PTR:
-			return sizeof( unsigned double ** );
+			return sizeof( double ** );
 			break;
 
 		break;
 		case SIGNED_DOUBLE_PTR_PTR:
-			return sizeof( signed double ** );
+			return sizeof( double ** );
 			break;
 
 
