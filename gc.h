@@ -3,12 +3,16 @@
 #ifndef _DAVELIB_C_GC_
 #define _DAVELIB_C_GC_
 
+#ifndef report
+#define report printf
+#endif
+
 typedef struct GC	{
 
 	void** _;
 	int c;
 	int v;
-	int* size;
+	signed* size;
 	TYPE* types;
 
 	int _v_;
@@ -18,6 +22,8 @@ typedef struct GC	{
 } GC;
 
 typedef enum {
+
+	NOT_SPECIFIED,
 
 	VOID_PTR,
 	VOID_PTR_PTR,
@@ -98,10 +104,11 @@ typedef enum {
 
 } TYPE;
 
-typedef struct gc_report	{
+typedef struct	{
 
 	int totalDeleted;
 	int v;
+
 } gc_report;
 
 // The int parameter is a MAX value for the number of ptrs to store. Set a reasonable 
