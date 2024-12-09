@@ -126,161 +126,6 @@ int freeGC( volatile struct GC* gc )	{
 	return t;
 }
 
-void* galloc( int size )	{
-
-	void* _ = g( malloc(size) );
-
-	gc->size[gc->v-1] = size;
-	gc->types[gc->v-1] = NOT_SPECIFIED;
-
-	return _;
-}
-
-void* galloc2( int size, TYPE type )	{
-
-	void* _ = g( malloc(size) );
-
-	gc->size[gc->v-1] = size;
-	gc->types[gc->v-1] = type;
-
-	return _;
-}
-
-int sizeof_type( TYPE type )	{
-
-	switch( type )	{
-
-		break;
-		case NOT_SPECIFIED:
-			return 0;
-			break;
-
-		break;
-		case VOID_PTR:
-			return sizeof( void* );
-			break;
-
-		break;
-		case return sizeof( void** ):
-			return 0;
-			break;
-
-		break;
-		case NOT_SPECIFIED:
-			return 0;
-			break;
-
-		break;
-		case NOT_SPECIFIED:
-			return 0;
-			break;
-
-	}
-
-
-	/**#
-typedef enum {
-
-	NOT_SPECIFIED,
-
-	VOID_PTR,
-	VOID_PTR_PTR,
-
-	INT,
-	UNSIGNED_INT,
-	SIGNED_INT,
-
-	INT_PTR,
-	UNSIGNED_INT_PTR,
-	SIGNED_INT_PTR,
-	
-	INT_PTR_PTR,
-	UNSIGNED_INT_PTR_PTR,
-	SIGNED_INT_PTR_PTR,
-
-
-	LONG_INT,
-	UNSIGNED_LONG_INT,
-	SIGNED_LONG_INT,
-
-	LONG_INT_PTR,
-	UNSIGNED_LONG_INT_PTR,
-	SIGNED_LONG_INT_PTR,
-
-	LONG_INT_PTR_PTR,
-	UNSIGNED_LONG_INT_PTR_PTR,
-	SIGNED_LONG_INT_PTR_PTR,
-
-
-	LONG_LONG_INT,
-	UNSIGNED_LONG_LONG_INT,
-	SIGNED_LONG_LONG_INT,
-	
-	LONG_LONG_INT_PTR,
-	UNSIGNED_LONG_LONG_INT_PTR,
-	SIGNED_LONG_LONG_INT_PTR,
-
-	LONG_LONG_INT_PTR_PTR,
-	UNSIGNED_LONG_LONG_INT_PTR_PTR,
-	SIGNED_LONG_LONG_INT_PTR_PTR,
-
-	CHAR,
-	UNSIGNED_CHAR,
-	SIGNED_CHAR,
-
-	CHAR_PTR,
-	UNSIGNED_CHAR_PTR,
-	SIGNED_CHAR_PTR,
-
-	CHAR_PTR_PTR,
-	UNSIGNED_CHAR_PTR_PTR,
-	SIGNED_CHAR_PTR_PTR,
-
-	FLOAT,
-	UNSIGNED_FLOAT,
-	SIGNED_FLOAT,
-
-	FLOAT_PTR,
-	UNSIGNED_FLOAT_PTR,
-	SIGNED_FLOAT_PTR,
-
-	FLOAT_PTR_PTR,
-	UNSIGNED_FLOAT_PTR_PTR,
-	SIGNED_FLOAT_PTR_PTR,
-
-	DOUBLE,
-	UNSIGNED_DOUBLE,
-	SIGNED_DOUBLE,
-
-	DOUBLE_PTR,
-	UNSIGNED_DOUBLE_PTR,
-	SIGNED_DOUBLE_PTR,
-
-	DOUBLE_PTR_PTR,
-	UNSIGNED_DOUBLE_PTR_PTR,
-	SIGNED_DOUBLE_PTR_PTR,
-
-	STRUCT,
-	STRUCT_PTR,
-	STRUCT_PTR_PTR
-
-} TYPE;
-	*/
-
-}
-
-
-
-
-void* galloc3( TYPE type )	{
-
-	void* _ = g( malloc( sizeof_type(type) ) );
-
-	gc->size[gc->v-1] = -1;
-	gc->types[gc->v-1] = CHAR_PTR;
-
-	return _;
-}
 
 void* g( void* ref )	{
 	
@@ -288,7 +133,7 @@ void* g( void* ref )	{
 	
 	if( gc->c > gc->v )	{
 		
-		*(gc->size[v]) = 0;
+		(gc->size[v]) = 1;
 		gc->_[gc->v++] = ref;
 		gc->_v_++;
 		return ref;
@@ -307,16 +152,43 @@ void* g( void* ref )	{
 	goto loop;
 
 	report( "If you can see this message, the GC has not caught a reference allocation. For assistance "
-					"the reference address & is '%p'.\n", ref );
+					"the reference address (&ref) is '%p'.\n", ref );
 	
 	return ref;
+}
+void* galloc( int size )	{
+
+	void* _ = g( malloc(size) );
+
+	gc->size[gc->v-1] = size;
+	gc->types[gc->v-1] = NOT_SPECIFIED;
+
+	return _;
+}
+void* galloc2( int size, TYPE type )	{
+
+	void* _ = g( malloc(size) );
+
+	gc->size[gc->v-1] = size;
+	gc->types[gc->v-1] = type;
+
+	return _;
+}
+void* galloc3( TYPE type )	{
+
+	int s = sizeof_type(type);
+	void* _ = g( malloc( s ) );
+
+	gc->size[gc->v-1] = 1;
+	gc->types[gc->v-1] = type;
+
+	return _;
 }
 
 char* gcchar( void* ref )	{
 
 	return (char*) galloc3( CHAR_PTR );
 }
-
 char* gcchar2( int length )	{
 
 	return (char*) galloc2( length, CHAR_PTR );
@@ -365,12 +237,9 @@ int realloc_gc( volatile struct GC* gc_, int c2 )	{
 
 	for( i=0; i < t; i++ )
 		gc_->_[i] = _[i];
-
-
 	
 	gc_->v = i;
 	gc_->_v_ = _v_;
-
 	
 	if( i < c )	{
 
@@ -399,3 +268,317 @@ struct gc_report cleanUp( )	{
 	return _;
 }
 
+// For user-defined struct's, the user must use the canonical sizeof(), as so: sizeof( struct StructTag ), where
+// StructTag represents the struct TypeName.
+signed sizeof_type( TYPE type )	{
+
+	switch( type )	{
+
+		// NOT_SPECIFIED OR DELETED.
+		break;
+		case NOT_SPECIFIED:
+			return 0;
+			break;
+
+		break;
+		case DELETED:
+			return -1;
+
+
+		// VOID_PTR CLASSES.
+		break;
+		case VOID_PTR:
+			return sizeof( void* );
+			break;
+
+		break;
+		case VOID_PTR_PTR:
+			return sizeof( void** ):
+			return 0;
+			break;
+
+
+		// INT.
+		break;
+		case INT:
+			return sizeof( int );
+			break;
+
+		break;
+		case UNSIGNED_INT:
+			return sizeof( unsigned );
+			break;
+
+		break;
+		case SIGNED_INT:
+			return sizeof( signed );
+			break;
+
+		break;
+		case INT_PTR:
+			return sizeof( int* );
+			break;
+
+		break;
+		case UNSIGNED_INT_PTR:
+			return sizeof( unsigned* );
+			break;
+
+		break;
+		case SIGNED_INT_PTR:
+			return sizeof( signed* );
+			break;
+
+		break;
+		case INT_PTR_PTR:
+			return sizeof( int** );
+			break;
+		break;
+		case UNSIGNED_INT_PTR_PTR:
+			return sizeof( unsigned** );
+			break;
+		break;
+		case SIGNED_INT_PTR_PTR:
+			return sizeof( signed** );
+			break;
+		break;
+
+		break;
+		case LONG_INT_PTR:
+			return sizeof( long* );
+			break;
+
+		break;
+		case UNSIGNED_LONG_INT_PTR:
+			return sizeof( unsigned long* );
+			break;
+
+		break;
+		case SIGNED_LONG_INT_PTR:
+			return sizeof( signed long* );
+			break;
+
+		break;
+		case LONG_INT_PTR_PTR:
+			return sizeof( int** );
+			break;
+		break;
+		case UNSIGNED_LONG_INT_PTR_PTR:
+			return sizeof( unsigned long** );
+			break;
+		break;
+		case SIGNED_LONG_INT_PTR_PTR:
+			return sizeof( signed long** );
+			break;
+		break;
+
+		break;
+		case LONG_LONG_INT:
+			return sizeof( long long int );
+			break;
+
+		break;
+		case UNSIGNED_LONG_LONG_INT:
+			return sizeof( unsigned long long );
+			break;
+
+		break;
+		case SIGNED_LONG_LONG_INT:
+			return sizeof( signed long long );
+			break;
+
+		break;
+		case LONG_LONG_INT_PTR:
+			return sizeof( long long int * );
+			break;
+
+		break;
+		case UNSIGNED_LONG_LONG_INT_PTR:
+			return sizeof( unsigned long long * );
+			break;
+
+		break;
+		case SIGNED_LONG_LONG_INT_PTR:
+			return sizeof( signed long long * );
+			break;
+
+		break;
+		case LONG_LONG_INT_PTR_PTR:
+			return sizeof( long long int ** );
+			break;
+
+		break;
+		case UNSIGNED_LONG_LONG_INT_PTR_PTR:
+			return sizeof( unsigned long long ** );
+			break;
+
+		break;
+		case SIGNED_LONG_LONG_INT_PTR_PTR:
+			return sizeof( signed long long ** );
+			break;
+
+
+		// CHAR.
+		break;
+		case CHAR:
+			return sizeof( char ); // STD C guarantees this to be size(1)
+			break;
+
+		break;
+		case UNSIGNED CHAR:
+			return sizeof( unsigned char ); // STD C guarantees this to be size(1)
+			break;
+
+		break;
+		case SIGNED_CHAR:
+			return sizeof( signed char );
+			break;
+
+		break;
+		case CHAR_PTR:
+			return sizeof( char* );
+			break;
+
+		break;
+		case UNSIGNED_CHAR_PTR:
+			return sizeof( unsigned char * );
+			break;
+
+		break;
+		case SIGNED_CHAR_PTR:
+			return sizeof( signed char * );
+			break;
+
+		break;
+		case CHAR_PTR_PTR:
+			return sizeof( char** );
+			break;
+
+		break;
+		case UNSIGNED_CHAR_PTR_PTR:
+			return sizeof( unsigned char ** );
+			break;
+
+		break;
+		case SIGNED_CHAR_PTR_PTR:
+			return sizeof( signed char ** );
+			break;
+
+
+		// FLOAT.
+		break;
+		case FLOAT:
+			return sizeof( float );
+			break;
+
+		break;
+		case UNSIGNED_FLOAT:
+			return sizeof( unsigned float );
+			break;
+
+		break;
+		case SIGNED_FLOAT:
+			return sizeof( signed float );
+			break;
+
+		break;
+		case FLOAT_PTR:
+			return sizeof( float* );
+			break;
+
+		break;
+		case UNSIGNED_FLOAT_PTR:
+			return sizeof( unsigned float * );
+			break;
+
+		break;
+		case SIGNED_FLOAT_PTR:
+			return sizeof( signed float * );
+			break;
+
+		break;
+		case FLOAT_PTR_PTR:
+			return sizeof( float** );
+			break;
+
+		break;
+		case UNSIGNED_FLOAT_PTR_PTR:
+			return sizeof( unsigned float ** );
+			break;
+
+		break;
+		case SIGNED_FLOAT_PTR_PTR:
+			return sizeof( signed float ** );
+			break;
+
+
+		// DOUBLE.
+		break;
+		case DOUBLE:
+			return sizeof( double );
+			break;
+
+		break;
+		case UNSIGNED_DOUBLE:
+			return sizeof( unsigned double );
+			break;
+
+		break;
+		case SIGNED_DOUBLE:
+			return sizeof( signed double );
+			break;
+
+		break;
+		case DOUBLE_PTR:
+			return sizeof( double* );
+			break;
+
+		break;
+		case UNSIGNED_DOUBLE_PTR:
+			return sizeof( unsigned double * );
+			break;
+
+		break;
+		case SIGNED_DOUBLE_PTR:
+			return sizeof( signed double * );
+			break;
+
+		break;
+		case DOUBLE_PTR_PTR:
+			return sizeof( double** );
+			break;
+
+		break;
+		case UNSIGNED_DOUBLE_PTR_PTR:
+			return sizeof( unsigned double ** );
+			break;
+
+		break;
+		case SIGNED_DOUBLE_PTR_PTR:
+			return sizeof( signed double ** );
+			break;
+
+
+		// STRUCT_PTR CLASSES.
+		break;
+		case STRUCT_PTR:
+			return sizeof( struct* );
+			break;
+
+		break;
+		case STRUCT_PTR_PTR:
+			return sizeof( struct** );
+			break;
+
+		break;
+		default:
+			return -2;
+			break;
+
+		break;
+	}
+
+	return -3;
+}
+
+// EOF
