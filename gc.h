@@ -22,7 +22,6 @@ typedef enum {
 	VOID_PTR,
 	VOID_PTR_PTR,
 
-
 	INT,
 	UNSIGNED_INT,
 	SIGNED_INT,
@@ -61,7 +60,6 @@ typedef enum {
 	UNSIGNED_LONG_LONG_INT_PTR_PTR,
 	SIGNED_LONG_LONG_INT_PTR_PTR,
 
-
 	CHAR,
 	UNSIGNED_CHAR,
 	SIGNED_CHAR,
@@ -74,7 +72,6 @@ typedef enum {
 	UNSIGNED_CHAR_PTR_PTR,
 	SIGNED_CHAR_PTR_PTR,
 
-
 	FLOAT,
 	UNSIGNED_FLOAT,
 	SIGNED_FLOAT,
@@ -86,7 +83,6 @@ typedef enum {
 	FLOAT_PTR_PTR,
 	UNSIGNED_FLOAT_PTR_PTR,
 	SIGNED_FLOAT_PTR_PTR,
-
 
 	DOUBLE,
 	UNSIGNED_DOUBLE,
@@ -134,7 +130,12 @@ extern char* gcchar( void* );
 // GC_* build_gc_struct(int);
 extern int freeGC( volatile struct GC* gc );
 
-int getRef( void* );
+// Will return the index of the reference in the GC Active Context if is stored therewithin.
+// On being unable to find the reference, will return -1.
+signed getRef( void* );
+
+// returns the reference stored at indice [int]. If no reference is found at such an index, returns NULL.
+void* getRef2( int );
 
 // self-explanatory.
 // Searches the Active GC Context.
