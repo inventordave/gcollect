@@ -102,6 +102,10 @@ typedef enum {
 	UNSIGNED_DOUBLE_PTR_PTR,
 	SIGNED_DOUBLE_PTR_PTR,
 
+	STRUCT,
+	STRUCT_PTR,
+	STRUCT_PTR_PTR
+
 } TYPE;
 
 typedef struct	{
