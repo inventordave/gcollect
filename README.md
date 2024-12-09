@@ -11,5 +11,6 @@ You have the option to specify, upon allocation of a memory buffer, how long the
 
 Have fun examining my 'gc.c' SOURCE and 'gc.h' HEADER file. Comments/suggestions/complaints/insults are all welcome, ya Nazi f*ck.
 
-Written by Pseudonym Dave, 2024. Earth 66.
+Written by Dave, 2024. Earth 66.
+
 // EOF
