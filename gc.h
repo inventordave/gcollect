@@ -170,10 +170,10 @@ extern void* galloc3( TYPE type );
 
 // Will return the index of the reference in the GC Active Context if is stored therewithin.
 // On being unable to find the reference, will return -1.
-signed getRef( void* );
+signed getRef2( void* );
 
 // returns the reference stored at indice [int]. If no reference is found at such an index, returns NULL.
-void* getRef2( int );
+void* getRef( int );
 
 // self-explanatory.
 // Searches the Active GC Context.
