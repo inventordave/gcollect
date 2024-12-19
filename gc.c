@@ -33,21 +33,21 @@ volatile struct GC* initGC( int c )	{
 }
 volatile struct GC* build_gc_struct( int c )	{
 
-	volatile struct GC* gc = (volatile struct GC*)malloc( sizeof(volatile struct GC) );
+	volatile struct GC* gc_ = (volatile struct GC*)malloc( sizeof(volatile struct GC) );
 
-	gc->_ = (void**)calloc( c,sizeof(void*) );
+	gc_->_ = (void**)calloc( c,sizeof(void*) );
 
 	if( gc->_ == NULL )
 		c = 0;
 
-	gc->c = c;
-	gc->v = 0;
-	gc->size = (int*) calloc( c, sizeof(int) );
-	gc->types = (TYPE*) calloc( c, sizeof(TYPE) );
-	gc->_v_ = 0;
-	gc->_delquote_ = 0;
+	gc_->c = c;
+	gc_->v = 0;
+	gc_->size = (int*) calloc( c, sizeof(int) );
+	gc_->types = (TYPE*) calloc( c, sizeof(TYPE) );
+	gc_->_v_ = 0;
+	gc_->_delquote_ = 0;
 
-	return gc;
+	return gc_;
 }
 
 volatile struct GC* getGC()	{
@@ -65,7 +65,7 @@ int setGC( volatile struct GC* _ )	{
 	return 0;
 }
 
-signed getRef( void* ref )	{
+signed getRef2( void* ref )	{
 
 	int k;
 	for( k=0; k<gc->v; k++ )	{
@@ -77,7 +77,7 @@ signed getRef( void* ref )	{
 
 	return -1;
 }
-void* getRef2( int k )	{
+void* getRef( int k )	{
 
 	if( gc->v > k )
 		if( gc->_ != NULL )
