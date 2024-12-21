@@ -37,7 +37,7 @@ volatile struct GC* build_gc_struct( int c )	{
 
 	gc_->_ = (void**)calloc( c,sizeof(void*) );
 
-	if( gc->_ == NULL )
+	if( gc_->_ == NULL )
 		c = 0;
 
 	gc_->c = c;
