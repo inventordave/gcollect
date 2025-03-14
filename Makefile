@@ -1,7 +1,7 @@
 # Makefile for GC, Dave's C garbage-collection utility. Dave's (me) first name is actually Lee.
 # Nobody cared about Marvin, nobody cares about me. At least I'm not paranoid about it.
 
-.PHONY: clean
+.PHONY: clean all
 
 all: gc gcd gctest gctestd
 
