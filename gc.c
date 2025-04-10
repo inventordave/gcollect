@@ -22,8 +22,8 @@ void* gc_calloc( int width, int v )	{
 void* gc_alloc( int width, int v, char c )	{
 
 	int range = width*v;
-	void* buf = malloc( range );
-	void* ibuf = buf;
+	char* buf = malloc( range );
+	void* ibuf = (void*)buf;
 	
 	int i=0;
 	while( range-- )
