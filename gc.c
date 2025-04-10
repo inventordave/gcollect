@@ -9,6 +9,29 @@ static volatile struct GC* gc_bkp;
 static int z = 0;
 static int _entry = 1;
 
+void* gc_malloc( int v )	{
+	
+	return g( malloc(v) );
+}
+
+void* gc_calloc( int width, int v )	{
+	
+	return g( calloc( v,width ) );
+}
+
+void* gc_alloc( int width, int v, char c )	{
+
+	int range = width*v;
+	void* buf = malloc( range );
+	void* ibuf = buf;
+	
+	int i=0;
+	while( range-- )
+		*buf++ = c;
+	
+	return ibuf;
+}
+
 volatile struct GC* initGC( int c )	{
 
 	if( !_entry )	{
@@ -85,6 +108,20 @@ void* getRef( int k )	{
 
 	return NULL;
 }
+
+void* UpdateGC( void* ptr, void* newptr )	{
+	
+	int k;
+	for( k=0; k < gc->v; k++ )
+		if( gc->_[k] == ptr )	{
+			
+			gc->_[k] = newptr;
+			return newptr;
+		}
+		
+	return (void*)0;
+}
+
 
 int freeRef( void* ref )	{
 

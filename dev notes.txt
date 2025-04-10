@@ -15,6 +15,7 @@ where n is an expression, perhaps compound, providing a scalar offset from the p
 
 ////
 
+#define INC_PTR(ptr) UpDateGC(ptr,(++ptr));
 INC_PTR( ptr ) // ptr++
 DEC_PTR( ptr ) // ptr--
 PRE_INC_PTR( ptr ) // ++ptr

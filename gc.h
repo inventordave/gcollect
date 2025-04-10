@@ -153,6 +153,17 @@ signed sizeof_type( TYPE );
 // Default Usage: g( ref )
 extern void* g( void* );
 
+// Custom malloc()
+#define malloc gc_malloc
+extern void* gc_malloc( int v );
+
+#define calloc gc_calloc
+extern void* gc_calloc( int width, int v );
+
+#define alloc gc_alloc
+extern void* gc_alloc( int width, int v, char c );
+
+
 // Helper. returns a new reference pre-staticcasted to (char*).
 extern char* gcchar( void* );
 
@@ -174,6 +185,10 @@ signed getRef2( void* );
 
 // returns the reference stored at indice [int]. If no reference is found at such an index, returns NULL.
 void* getRef( int );
+
+// Returns the new ptr value, or NULL if ptr cannot be found in the gc ActiveContext.
+void* UpdateGC( void* ptr, void* newptr );
+#define INC_PTR(ptr) UpDateGC(ptr,(++ptr));
 
 // self-explanatory.
 // Searches the Active GC Context.
