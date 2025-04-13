@@ -154,10 +154,9 @@ signed sizeof_type( TYPE );
 extern void* g( void* );
 
 // Custom malloc()
-#define malloc gc_malloc
+
 extern void* gc_malloc( int v );
 
-#define calloc gc_calloc
 extern void* gc_calloc( int width, int v );
 
 #define alloc gc_alloc

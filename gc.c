@@ -11,6 +11,7 @@ static int _entry = 1;
 
 void* gc_malloc( int v )	{
 	
+	
 	return g( malloc(v) );
 }
 
