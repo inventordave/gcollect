@@ -1,4 +1,5 @@
 # gcollect
+# NOTA BENA: /gcollect0.1 is another repo of mine that is this project further-developed. It is still in-dev, tinkering may sometimes be required if you want to compile & play with, but often it will build successfully.
 
 C reference garbage collector.
 
